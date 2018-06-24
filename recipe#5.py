@@ -1,4 +1,9 @@
-import random
+# import random
+# I'm using the k-nearest neighbor algorithm (k-NN) for the classifier
+from scipy.spatial import distance
+
+def euc(a, b):
+    return distance.euclidean(a, b)
 # code from recipe#4 I build a custom classifier instead of importing it
 class ScrappyKNN():
     def fit(self, X_train, y_train):
@@ -8,9 +13,19 @@ class ScrappyKNN():
     def predict(self, X_test):
         predictions = []
         for row in X_test:
-            label = random.choice(self.y_train)
+        #   label = random.choice(self.y_train) replaced with below
+            label = self.closest(row) # finds the closest training point to the test point
             predictions.append(label)
         return predictions
+    def closest(self, row): # implementing the k-NN distance
+        best_dist = euc(row, self.X_train[0])
+        best_index = 0
+        for i in range(1, len(self.X_train)):
+            dist = euc(row, self.X_train[i])
+            if dist < best_dist:
+                best_dist = dist
+                best_index = i
+        return self.y_train[best_index]
 
 # import datasets
 from sklearn import datasets
